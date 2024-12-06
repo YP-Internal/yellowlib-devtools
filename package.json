@@ -1,0 +1,13 @@
+{
+    "name": "games.yellowpanda.devtools",
+    "author": "Yellow Panda",
+    "displayName": "Yellow Lib - Dev Tools",
+    "version": "1.0.0",
+    "unity": "2022.3",
+    "keywords": [],
+    "description": "Pacote de Dev Tools da Yellow Panda",
+    "samples": [],
+	"dependencies": {
+		"games.yellowpanda.yellowlib.core": "https://github.com/YP-Internal/yellowlib-core.git"
+	}
+}

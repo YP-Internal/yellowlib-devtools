@@ -1,0 +1,16 @@
+{
+    "name": "YellowPanda.DevTools",
+    "rootNamespace": "",
+    "references": [
+        "GUID:212b632f78b0dce4e80294540ab45dec"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
