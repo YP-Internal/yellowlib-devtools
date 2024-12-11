@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DevToolsPanel : MonoBehaviour
 {
-    CanvasGroup canvasGroup;
+    CanvasGroup _canvasGroup;
 
     private void Awake()
     {
@@ -11,21 +11,21 @@ public class DevToolsPanel : MonoBehaviour
         Destroy(transform.parent.gameObject);
         return;
 #endif
-        canvasGroup = GetComponent<CanvasGroup>();
+        _canvasGroup = GetComponent<CanvasGroup>();
 
     }
 
     public void OpenPanel()
     {
-        LeanTween.alphaCanvas(canvasGroup, 1, 0.3f).setOnComplete(() =>
+        LeanTween.alphaCanvas(_canvasGroup, 1, 0.3f).setOnComplete(() =>
         {
-            canvasGroup.blocksRaycasts = true;
+            _canvasGroup.blocksRaycasts = true;
         });
     }
 
     public void ClosePanel()
     {
-        canvasGroup.blocksRaycasts = false;
-        LeanTween.alphaCanvas(canvasGroup, 0, 0.3f);
+        _canvasGroup.blocksRaycasts = false;
+        LeanTween.alphaCanvas(_canvasGroup, 0, 0.3f);
     }
 }

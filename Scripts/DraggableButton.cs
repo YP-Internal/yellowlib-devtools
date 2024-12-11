@@ -6,125 +6,120 @@ namespace YellowPanda.DevTools
 {
     public class DraggableButton : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerClickHandler
     {
-
-        [SerializeField] UnityEvent OnClick;
-
-        Vector2 dragStart;
-        Vector2 dragOffset;
-
-        bool dragging;
-        ButtonSnapType snapType;
-        RectTransform rect;
-        float speedY;
-        Vector2 lastPosition;
-        Vector2 pointerPosition;
-
-        private void Awake()
-        {
-            rect = GetComponent<RectTransform>();
-            lastPosition = transform.position;
-        }
-
         enum ButtonSnapType
         {
             Left,
             Right
         }
 
-        public void OnBeginDrag(PointerEventData eventData)
+        [SerializeField] UnityEvent OnClick;
+
+        Vector2 _dragStart;
+        Vector2 _dragOffset;
+
+        bool _dragging;
+        ButtonSnapType _snapType;
+        RectTransform _rect;
+        float _speedY;
+        Vector2 _lastPosition;
+        Vector2 _pointerPosition;
+
+        private void Awake()
         {
-            dragStart = pointerPosition;
-            dragOffset = (Vector2)transform.position - dragStart;
-            dragging = true;
+            _rect = GetComponent<RectTransform>();
+            _lastPosition = transform.position;
         }
 
         private void Update()
         {
-            pointerPosition = Input.mousePosition;
+            _pointerPosition = Input.mousePosition;
             if (Input.touchCount > 0)
-                pointerPosition = Input.GetTouch(0).position;
+                _pointerPosition = Input.GetTouch(0).position;
 
-            if (dragging)
+            if (_dragging)
             {
-                Vector2 targetPosition = pointerPosition + dragOffset;
+                Vector2 targetPosition = _pointerPosition + _dragOffset;
 
                 //Segue a posição do mouse ou do pointer
                 Vector2 position = transform.position;
                 position += (targetPosition - position) / 5f * Time.deltaTime * 60f;
                 transform.position = position;
 
-                speedY = rect.anchoredPosition.y - lastPosition.y; //Salva a velocidade Y do drag;
+                _speedY = _rect.anchoredPosition.y - _lastPosition.y; //Salva a velocidade Y do drag;
             }
             else
             {
-                speedY += (0 - speedY) / 10f * Time.deltaTime * 60f; //Desacelera
+                _speedY += (0 - _speedY) / 10f * Time.deltaTime * 60f; //Desacelera
 
-                float width = rect.rect.width;
-                if (snapType == ButtonSnapType.Left)
+                float width = _rect.rect.width;
+                if (_snapType == ButtonSnapType.Left)
                 {
                     Vector3 oldPosition = transform.position;
-                    rect.anchorMin = new Vector2(0, 0.5f); //Garante que mudar a ancora não vai mudar a posição
-                    rect.anchorMax = new Vector2(0, 0.5f);
+                    _rect.anchorMin = new Vector2(0, 0.5f); //Garante que mudar a ancora não vai mudar a posição
+                    _rect.anchorMax = new Vector2(0, 0.5f);
                     transform.position = oldPosition;
 
-                    Vector2 targetOffset = new Vector2(20, rect.offsetMin.y);
+                    Vector2 targetOffset = new Vector2(20, _rect.offsetMin.y);
                     //Interpola a posição pra fazer snap no canto esquerdo
-                    rect.offsetMin += (targetOffset - rect.offsetMin) / 5f * Time.deltaTime * 60f;
-                    rect.offsetMax = new Vector2(rect.offsetMin.x + width, rect.offsetMax.y);
+                    _rect.offsetMin += (targetOffset - _rect.offsetMin) / 5f * Time.deltaTime * 60f;
+                    _rect.offsetMax = new Vector2(_rect.offsetMin.x + width, _rect.offsetMax.y);
                 }
-                else if (snapType == ButtonSnapType.Right)
+                else if (_snapType == ButtonSnapType.Right)
                 {
                     Vector3 oldPosition = transform.position;
-                    rect.anchorMin = new Vector2(1, 0.5f); //Garante que mudar a ancora não vai mudar a posição
-                    rect.anchorMax = new Vector2(1, 0.5f);
+                    _rect.anchorMin = new Vector2(1, 0.5f); //Garante que mudar a ancora não vai mudar a posição
+                    _rect.anchorMax = new Vector2(1, 0.5f);
                     transform.position = oldPosition;
 
-                    Vector2 targetOffset = new Vector2(-20, rect.offsetMax.y);
+                    Vector2 targetOffset = new Vector2(-20, _rect.offsetMax.y);
                     //Interpola a posição pra fazer snap no canto direito
-                    rect.offsetMax += (targetOffset - rect.offsetMax) / 5f * Time.deltaTime * 60f;
-                    rect.offsetMin = new Vector2(rect.offsetMax.x - width, rect.offsetMin.y);
+                    _rect.offsetMax += (targetOffset - _rect.offsetMax) / 5f * Time.deltaTime * 60f;
+                    _rect.offsetMin = new Vector2(_rect.offsetMax.x - width, _rect.offsetMin.y);
                 }
 
-                float newY = rect.anchoredPosition.y + speedY;
+                float newY = _rect.anchoredPosition.y + _speedY;
 
                 //Garante que o botão não vai sair da tela sem querer
-                if (newY < -Screen.height / 2f + rect.rect.height / 2f + 20) newY = -Screen.height / 2f + rect.rect.height / 2f + 20;
-                if (newY > Screen.height / 2f - rect.rect.height / 2f - 20) newY = Screen.height / 2f - rect.rect.height / 2f - 20;
+                if (newY < -Screen.height / 2f + _rect.rect.height / 2f + 20) newY = -Screen.height / 2f + _rect.rect.height / 2f + 20;
+                if (newY > Screen.height / 2f - _rect.rect.height / 2f - 20) newY = Screen.height / 2f - _rect.rect.height / 2f - 20;
 
-                rect.anchoredPosition = new Vector2( //Move Y baseado na velocidade que "jogou"
-                            rect.anchoredPosition.x,
+                _rect.anchoredPosition = new Vector2( //Move Y baseado na velocidade que "jogou"
+                            _rect.anchoredPosition.x,
                             newY
                         );
             }
 
-            lastPosition = rect.anchoredPosition;
+            _lastPosition = _rect.anchoredPosition;
         }
-
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            _dragStart = _pointerPosition;
+            _dragOffset = (Vector2)transform.position - _dragStart;
+            _dragging = true;
+        }
         public void OnEndDrag(PointerEventData eventData)
         {
-            dragging = false;
+            _dragging = false;
 
-            float mrx = pointerPosition.x / Screen.width;
+            float mrx = _pointerPosition.x / Screen.width;
             if (mrx < .5f)
             {
-                snapType = ButtonSnapType.Left;
+                _snapType = ButtonSnapType.Left;
             }
             else
             {
-                snapType = ButtonSnapType.Right;
+                _snapType = ButtonSnapType.Right;
             }
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (!dragging)
+            if (!_dragging)
             {
                 OnClick?.Invoke();
             }
         }
 
-        public void OnDrag(PointerEventData eventData)
-        {
-        }
+        public void OnDrag(PointerEventData eventData) { }
     }
 }
